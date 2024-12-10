@@ -1,5 +1,7 @@
 package main
 
+/*
+
 import (
 	"context"
 	"fmt"
@@ -70,3 +72,5 @@ func main() {
 		go requestHandler(conn, 1*time.Second) // 1 second timeout for each request
 	}
 }
+
+*/
