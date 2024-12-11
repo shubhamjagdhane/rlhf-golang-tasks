@@ -10,18 +10,10 @@ type Item struct {
 	Name string `json:"name"`
 }
 
-var (
-	items   []Item    // Shared data structure
-	writeCh chan Item // Channel for synchronizing writes
-)
-
-func init() {
-	// Create a buffer of size 1 for the write channel
-	writeCh = make(chan Item, 1)
-}
+type Items []Item
 
 // Endpoint to add an item
-func addItem(w http.ResponseWriter, r *http.Request) {
+func (i *Items) addItem(w http.ResponseWriter, r *http.Request) {
 	// Only accept POST requests
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -36,36 +28,28 @@ func addItem(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	// Send the item to the write channel
-	writeCh <- item
+	*i = append(*i, item)
 
-	// Respond with a success message
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(item)
 }
 
 // Endpoint to get all items
-func getItems(w http.ResponseWriter, r *http.Request) {
+func (i *Items) getItems(w http.ResponseWriter, r *http.Request) {
 	// Create a copy of the items slice to safely return data
 	// Respond with the list of items
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(items)
-}
-
-// Background goroutine to handle writes to the shared list
-func writeHandler() {
-	for item := range writeCh {
-		// Append the new item to the shared list
-		items = append(items, item)
-	}
+	json.NewEncoder(w).Encode(i)
 }
 
 func main() {
 	// Start the write handler goroutine
-	go writeHandler()
+	//	go writeHandler()
 
-	http.HandleFunc("/items", addItem)
-	http.HandleFunc("/items/all", getItems)
+	items := Items{}
+
+	http.HandleFunc("/items", items.addItem)
+	http.HandleFunc("/items/all", items.getItems)
 
 	fmt.Println("Server is listening on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
