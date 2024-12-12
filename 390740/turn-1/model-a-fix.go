@@ -12,30 +12,27 @@ import (
 func doWork(ctx context.Context) {
 	defer cleanup() // Ensure cleanup is called
 
-	// Simulate work with a Goroutine
-	go func() {
-		// Simulated "work" that might panic
-		defer func() {
-			if r := recover(); r != nil {
-				log.Printf("Recovered from panic: %v", r)
-			}
-		}()
-
-		for {
-			select {
-			case <-ctx.Done():
-				log.Println("Received cancellation signal, exiting work.")
-				return
-			default:
-				// Simulating a potential panic situation
-				if someConditionCausesPanic() {
-					panic("something went wrong!")
-				}
-				log.Println("Doing work...")
-				time.Sleep(1 * time.Second) // Simulate some work
-			}
+	// Simulated "work" that might panic
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic: %v", r)
 		}
 	}()
+
+	for {
+		select {
+		case <-ctx.Done():
+			log.Println("Received cancellation signal, exiting work.")
+			return
+		default:
+			// Simulating a potential panic situation
+			if someConditionCausesPanic() {
+				panic("something went wrong!")
+			}
+			log.Println("Doing work...")
+			time.Sleep(1 * time.Second) // Simulate some work
+		}
+	}
 }
 
 // Cleanup function to release resources
@@ -53,7 +50,7 @@ func someConditionCausesPanic() bool {
 func main() {
 	// Create a context with cancellation
 	ctx, cancel := context.WithCancel(context.Background())
-	//	defer cancel()
+	defer cancel()
 
 	// Handle OS signals for graceful shutdown
 	sigs := make(chan os.Signal, 1)
