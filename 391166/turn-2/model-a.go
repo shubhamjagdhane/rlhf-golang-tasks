@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"bufio"
 	"context"
@@ -88,3 +89,5 @@ func main() {
 		log.Printf("error streaming data: %v", err)
 	}
 }
+
+*/

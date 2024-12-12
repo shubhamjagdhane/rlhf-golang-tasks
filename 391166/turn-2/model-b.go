@@ -1,6 +1,5 @@
 package main
 
-/*
 import (
 	"bufio"
 	"context"
@@ -90,5 +89,3 @@ func main() {
 		logger.Error().Err(err).Msg("error streaming data")
 	}
 }
-
-*/
