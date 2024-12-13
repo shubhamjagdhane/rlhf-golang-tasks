@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"encoding/json"
 	"fmt"
@@ -80,3 +81,5 @@ func main() {
 	}
 	fmt.Printf("User: %+v\n", user)
 }
+
+*/
